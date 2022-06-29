@@ -15,25 +15,22 @@ services:
       - temporal-network
     ports:
       - 9200:9200
-  mysql:
-    container_name: temporal-mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-    image: mysql:${MYSQL_VERSION}
-    networks:
-      - temporal-network
-    ports:
-      - 3306:3306
   temporal:
     container_name: temporal
     depends_on:
-      - mysql
       - elasticsearch
     environment:
       - DB=mysql
-      - MYSQL_USER=root
-      - MYSQL_PWD=root
-      - MYSQL_SEEDS=mysql
+      - MYSQL_USER=${TEMPORAL_USER}
+      - MYSQL_PWD=${TEMPORAL_PASSWORD}
+      - MYSQL_SEEDS=${TEMPORAL_PSCALE_HOSTSTRING}
+      - VISIBILITY_MYSQL_USER=${TEMPORAL_VISIBILITY_USER}
+      - VISIBILITY_MYSQL_PWD=${TEMPORAL_VISIBILITY_PASSWORD}
+      - VISIBILITY_MYSQL_SEEDS=${TEMPORAL_VISIBILITY_PSCALE_HOSTSTRING}
+      - SQL_TLS=true
+      - SKIP_DB_CREATE=true
+      - SKIP_SCHEMA_SETUP=true
+      - SQL_TLS_ENABLED=true
       - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
       - ENABLE_ES=true
       - ES_SEEDS=elasticsearch
